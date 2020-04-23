@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const {
   denyFriendRequest,
   deleteFriend,
@@ -7,12 +8,14 @@ const {
 } = require("../controllers/friend");
 const router = express.Router();
 
-router.post("/requests/:id", sendRequestFriend);
+const auth = passport.authenticate("jwt", { session: false });
 
-router.delete("/requests/:id", denyFriendRequest);
+router.post("/requests/:id", auth, sendRequestFriend);
 
-router.put("/requests/:id", acceptFriendRequest);
+router.delete("/requests/:id", auth, denyFriendRequest);
 
-router.delete("/:id", deleteFriend);
+router.put("/requests/:id", auth, acceptFriendRequest);
+
+router.delete("/:id", auth, deleteFriend);
 
 module.exports = router;
